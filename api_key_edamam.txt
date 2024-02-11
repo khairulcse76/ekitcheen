@@ -1,9 +1,11 @@
-# ekitcheen
 
 
-Edamam API Key
 https://api.edamam.com/api/recipes/v2?type=public&beta=true&q=chicken&app_id=707a4cd8&app_key=52196aad6a8f417866c398d4ced69a3d
+
+
 Edamam Account Login Info
 user name: totapakhi
 gmail= drive.khairulislam@gmail.com
 pass: Khairulislam1
+
+account url: https://developer.edamam.com/admin

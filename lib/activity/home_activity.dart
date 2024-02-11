@@ -1,6 +1,12 @@
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:ekitcheen/models/recipe_model.dart';
 import 'package:ekitcheen/widgets/MySearchBar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart' as http;
 
 class HomeActivity extends StatefulWidget {
   const HomeActivity({super.key});
@@ -11,6 +17,45 @@ class HomeActivity extends StatefulWidget {
 
 class _HomeActivityState extends State<HomeActivity> {
   TextEditingController searchCtrl = TextEditingController();
+
+  String? searchItem="Potato";
+//-------------------xxxxxxxxxxxxxxxxxx-------------
+
+  List <RecipeModel> recipeList=<RecipeModel>[];
+  void getData(String query) async {
+    Uri uri = Uri.parse("https://api.edamam.com/api/recipes/v2?type=public&beta=true&q=$query&app_id=707a4cd8&app_key=52196aad6a8f417866c398d4ced69a3d");
+    http.Response response =await http.get(uri);
+    Map data = jsonDecode(response.body);
+      //log(data.toString());
+
+      data['hits'].forEach((element){
+        RecipeModel recipeModel=new RecipeModel();
+        recipeModel=RecipeModel.fromMap(element['recipe']);
+        recipeList.add(recipeModel);
+        //log(recipeModel.toString());
+      });
+      
+      recipeList.forEach((recipe){
+        print("Label of $searchItem = ""${recipe.appLabel}");
+        print("Calories of $searchItem = ""${recipe.appCalories}");
+      });
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+    getData(searchCtrl.text);
+  }
+  @override
+  void initState() {
+    super.initState();
+
+    getData(searchItem!);
+
+    //getData(searchItem!);
+  }
+ // -------------------------xxxxxxxxxxxx--------------
+
 
   @override
   void dispose() {
@@ -30,8 +75,10 @@ class _HomeActivityState extends State<HomeActivity> {
             onPressedIcon: (){
               if((searchCtrl.text).replaceAll(" ", "")==""){
               }else{
+                searchItem=searchCtrl.text;
                 setState(() {
-                  print("Print Text from onPressedIcon: ${searchCtrl.text}");
+                  getData(searchCtrl.text);
+                  //print("Print Text from onPressedIcon: ${searchCtrl.text}");
                 });
                 searchCtrl.clear();
               }
@@ -39,7 +86,9 @@ class _HomeActivityState extends State<HomeActivity> {
             onEditingComplete: (){
               FocusScope.of(context).requestFocus(FocusNode());
               setState(() {
-                print("Print Text from onEditingComplete: ${searchCtrl.text}");
+                searchItem=searchCtrl.text;
+                getData(searchCtrl.text);
+                //print("Print Text from onEditingComplete: ${searchCtrl.text}");
               });
               searchCtrl.clear();
             }),
