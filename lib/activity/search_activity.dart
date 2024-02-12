@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:ekitcheen/activity/search_activity.dart';
 import 'package:ekitcheen/app.dart';
 import 'package:ekitcheen/models/recipe_model.dart';
 import 'package:ekitcheen/widgets/MySearchBar.dart';
@@ -10,31 +9,28 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 
-class HomeActivity extends StatefulWidget {
-   String query;
-   HomeActivity(this.query, {super.key});
 
-
+class MySearchRecipeListActivity extends StatefulWidget {
+  String query;
+  MySearchRecipeListActivity(  this.query, {super.key});
 
   @override
-  State<HomeActivity> createState() => _HomeActivityState();
+  State<MySearchRecipeListActivity> createState() => _MySearchRecipeListState();
 }
 
-class _HomeActivityState extends State<HomeActivity> {
+class _MySearchRecipeListState extends State<MySearchRecipeListActivity> {
+
   TextEditingController searchCtrl = TextEditingController();
 
 
-  //String? searchItem="Healthy Foods";
-
-//-------------------xxxxxxxxxxxxxxxxxx-------------
-
   List <RecipeModel> recipeList=<RecipeModel>[];
   bool myLoading =true;
-  void getData(String query) async {
-    setState(() {
+
+  void getData(String recipeName) async {
       myLoading=true;
-    });
-    Uri uri = Uri.parse("https://api.edamam.com/api/recipes/v2?type=public&beta=true&q=$query&app_id=707a4cd8&app_key=52196aad6a8f417866c398d4ced69a3d");
+      /*print('Query Data From: $racipeName');
+      print('After  myLoading $myLoading');*/
+    Uri uri = Uri.parse("https://api.edamam.com/api/recipes/v2?type=public&beta=true&q=$recipeName&app_id=707a4cd8&app_key=52196aad6a8f417866c398d4ced69a3d");
     http.Response response =await http.get(uri);
     Map data = jsonDecode(response.body);
     //log(data.toString());
@@ -47,32 +43,25 @@ class _HomeActivityState extends State<HomeActivity> {
       setState(() {
         myLoading=false;
       });
+      //print('After myLoading  $myLoading');
     });
 
     recipeList.forEach((recipe){
       /*print("Label of $searchItem = ""${recipe.appLabel}");*/
-      print("Calories of ${searchCtrl.text} = ""${recipe.appCalories}");
+      //print("Calories of ${searchCtrl.text} = ""${recipe.appCalories}");
     });
   }
-
-
   @override
   void initState() {
     super.initState();
     getData(widget.query);
+    //print('Print from InitState : ${widget.query}');
   }
   // -------------------------xxxxxxxxxxxx--------------
 
   @override
-  void dispose() {
-    searchCtrl.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    /*String query = widget.query;
-    print(' Print from build $query');*/
+    var SearchText = widget.query;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFc1dfc4),
@@ -83,23 +72,17 @@ class _HomeActivityState extends State<HomeActivity> {
             onPressedIcon: (){
               if((searchCtrl.text).replaceAll(" ", "")==""){
               }else{
-                /*//searchItem=searchCtrl.text;
-                setState(() {
-                  getData(searchCtrl.text);
-                  print("onClick");
-                });*/
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => MySearchRecipeListActivity(searchCtrl.text,),));
-                //searchCtrl.clear();
+                Navigator.pushReplacement(context, MaterialPageRoute(
+                  builder: (context) => MySearchRecipeListActivity(searchCtrl.text),));
               }
             },
             onEditingComplete: (){
               FocusScope.of(context).requestFocus(FocusNode());
               if((searchCtrl.text).replaceAll(" ", "")==""){
               }else{
-                Navigator.push(context, MaterialPageRoute(
+                Navigator.pushReplacement(context, MaterialPageRoute(
                   builder: (context) => MySearchRecipeListActivity(searchCtrl.text),));
-                //searchCtrl.clear();
+                //print(searchCtrl.text);
               }
             }),
         centerTitle: true,
@@ -125,20 +108,19 @@ class _HomeActivityState extends State<HomeActivity> {
                 children: [
                   Container(
                     padding:  const EdgeInsets.only(left: 15, right: 10, top: 8, bottom: 5),
-                    child:  const Column(
+                    child:   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       //mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text("Any cooking plans for today?", style: TextStyle(fontWeight: FontWeight.bold,fontSize: 40, color: Colors.black),),
-                        Text("Let's Coock Something New", style: TextStyle(fontSize: 24, color: Colors.black)),
+                        Text("Your Search : $SearchText", style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 30, color: Colors.black),),
                       ],
                     ),
                   ),
                   Container(
-                    child: myLoading? CircularProgressIndicator():
+                    child: myLoading? const CircularProgressIndicator():
                     ListView.builder(
                       scrollDirection: Axis.vertical,
-                      physics: const NeverScrollableScrollPhysics(),
+                      physics:  const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemCount: recipeList.length,
                       itemBuilder: (context, index) {
@@ -165,9 +147,13 @@ class _HomeActivityState extends State<HomeActivity> {
                                 left: 0,
                                 right: 0,
                                 child: Container(
-                                  padding:const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                  padding:const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                                   decoration:const BoxDecoration(
                                     color: Colors.white70,
+                                    borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.circular(20),
+                                      bottomLeft: Radius.circular(20),
+                                    )
                                   ),
                                   child: Text(recipeList[index].appLabel.toString(), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),),
                               ),
@@ -189,7 +175,7 @@ class _HomeActivityState extends State<HomeActivity> {
                                         const Icon(FontAwesomeIcons.fire, size: 15,color: Colors.red,),
                                         const SizedBox(width: 5,),
                                         Text(
-                                            recipeList[index].appCalories.toString().substring(0,5),
+                                          recipeList[index].appCalories.toString().substring(0,5),
                                         ),
                                       ],
                                     )
@@ -209,3 +195,5 @@ class _HomeActivityState extends State<HomeActivity> {
     );//Scaffhold Close
   }
 }
+
+
