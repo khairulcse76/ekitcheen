@@ -29,7 +29,7 @@ class _HomeActivityState extends State<HomeActivity> {
       //log(data.toString());
 
       data['hits'].forEach((element){
-        RecipeModel recipeModel=new RecipeModel();
+        RecipeModel recipeModel=RecipeModel();
         recipeModel=RecipeModel.fromMap(element['recipe']);
         recipeList.add(recipeModel);
         //log(recipeModel.toString());
@@ -56,7 +56,6 @@ class _HomeActivityState extends State<HomeActivity> {
   }
  // -------------------------xxxxxxxxxxxx--------------
 
-
   @override
   void dispose() {
     searchCtrl.dispose();
@@ -67,7 +66,7 @@ class _HomeActivityState extends State<HomeActivity> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFFc1dfc4),
+        backgroundColor: const Color(0xFFc1dfc4),
         title:MySearchbar(
             searchCtrl: searchCtrl,
             backgroundColor: Colors.white,
@@ -100,7 +99,7 @@ class _HomeActivityState extends State<HomeActivity> {
           Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            decoration:  BoxDecoration(
+            decoration:  const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topRight,
                 end: Alignment.bottomLeft,
@@ -109,26 +108,97 @@ class _HomeActivityState extends State<HomeActivity> {
                     Color(0xFFdeecdd),
                   ])
             ),
-            child:  Column(
-              //mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  padding:  const EdgeInsets.only(left: 15, right: 10, top: 8, bottom: 5),
-                    child:  const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      //mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text("Any cooking plans for today?", style: TextStyle(fontWeight: FontWeight.bold,fontSize: 40, color: Colors.black),),
-                        Text("Let's Coock Something New", style: TextStyle(fontSize: 24, color: Colors.black)),
-                      ],
-                    ),
-                ),
+            child:  SingleChildScrollView(
+              child: Column(
+                //mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    padding:  const EdgeInsets.only(left: 15, right: 10, top: 8, bottom: 5),
+                      child:  const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        //mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text("Any cooking plans for today?", style: TextStyle(fontWeight: FontWeight.bold,fontSize: 40, color: Colors.black),),
+                          Text("Let's Coock Something New", style: TextStyle(fontSize: 24, color: Colors.black)),
+                        ],
+                      ),
+                  ),
+                  Container(
+                    child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: recipeList.length,
+                      itemBuilder: (context, index) {
+                      return  Card(
+                        margin: const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 5),
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        elevation: 0,
+                        child: Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Image.network(
+                                  recipeList[index].appImgUrl.toString(),
+                                width: double.infinity,
+                                height: 250,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Positioned(
+                                bottom: 0,
+                              left: 0,
+                              right: 0,
+                                child: Container(
+                                  padding:const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                  decoration:const BoxDecoration(
+                                    color: Colors.white70,
+                                  ),
+                                    child: Text(recipeList[index].appLabel.toString(), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),),
+                            ),
+                             Positioned(
+                              right: 0,
+                              top: 0,
 
-              ],
+                                child: Container(
+                                  padding:EdgeInsets.all(10),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white70,
+                                    borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(20),
+                                      bottomLeft: Radius.circular(15),
+                                    )
+                                  ),
+                                  child:   Row(
+                                    children: [
+                                      const Icon(FontAwesomeIcons.fire, size: 15,color: Colors.red,),
+                                      const SizedBox(width: 5,),
+                                      Text(
+                                        recipeList[index].appCalories.toString().substring(0,7)
+                                      ),
+                                    ],
+                                  )
+                                ),
+                            )
+                          ],
+                        ),
+                      );
+                    },),
+                  ),
+                ],
+              ),
             ),
           )
         ],
       ),
     );//Scaffhold Close
   }
+}
+
+Widget MyWidgets() {
+
+  return Text('Data from Widgets');
 }
