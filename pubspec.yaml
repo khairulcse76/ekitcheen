@@ -13,8 +13,6 @@ dependencies:
     sdk: flutter
 
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
 
 dev_dependencies:
@@ -31,6 +29,9 @@ dev_dependencies:
 
   #spinner dependency
   flutter_spinkit: ^5.2.0
+
+  #Web View dependency
+  webview_flutter: ^4.7.0
 
 
   #gradient Color for AppBar

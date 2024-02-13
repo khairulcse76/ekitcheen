@@ -177,7 +177,7 @@ class _HomeActivityState extends State<HomeActivity> {
                                       const Icon(FontAwesomeIcons.fire, size: 15,color: Colors.red,),
                                       const SizedBox(width: 5,),
                                       Text(
-                                        recipeList[index].appCalories.toString().substring(0,7)
+                                        recipeList[index].appCalories.toString().substring(0,7),
                                       ),
                                     ],
                                   )

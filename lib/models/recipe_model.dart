@@ -28,8 +28,8 @@ class RecipeModel{
 
     );
   }
-/*
 
+/*
   Future<void> getModelData(String query) async {
     List <RecipeModel> recipeList=<RecipeModel>[];
     Uri uri = Uri.parse("https://api.edamam.com/api/recipes/v2?type=public&beta=true&q=$query&app_id=707a4cd8&app_key=52196aad6a8f417866c398d4ced69a3d");
@@ -51,7 +51,5 @@ class RecipeModel{
     });
   }
 */
-
-
 
 }
